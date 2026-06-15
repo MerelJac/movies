@@ -54,26 +54,22 @@ class TmdbService
         ];
     }
 
-        /**
-     * GET popular movies
+    /**
+     * GET popular movies - takes no query.
      *
-     * @return array{page:int,total_results:int,total_pages:int,results:array<int,array<string,mixed>>}
+     * @return array{page:int,results:array<int,array<string,mixed>>}
      */
-    public function searchMovies(string $query, int $page = 1): array
+    public function popularMovies(int $page = 1): array
     {
         $data = $this->request()
-            ->get('/discover/movie', [
-                'query' => $query,
+            ->get('/movie/popular', [
                 'page' => $page,
-                'include_adult' => false,
             ])
             ->throw()
             ->json();
 
         return [
             'page' => $data['page'] ?? 1,
-            'total_results' => $data['total_results'] ?? 0,
-            'total_pages' => $data['total_pages'] ?? 0,
             'results' => array_map(
                 fn (array $movie) => [
                     'id' => $movie['id'] ?? null,
