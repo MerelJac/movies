@@ -13,6 +13,11 @@ rate limiting?
 caching ?
 
 
+# to run 
+cd backend && php artisan serve
+cd frontend && npm run dev
+
+
 # API Calls
 - Create Guest Session
 https://api.themoviedb.org/3/authentication/guest_session/new

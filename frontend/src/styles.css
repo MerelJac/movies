@@ -129,6 +129,68 @@ body {
   color: var(--white);
 }
 
+.own-button {
+  margin-top: 0.75rem;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.own-button--owned {
+  background: var(--accent);
+  color: var(--darkest);
+}
+
+/* react-bootstrap Tabs, restyled to match the dark palette. */
+.movie-tabs.nav-tabs {
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--dark);
+  gap: 0.25rem;
+}
+
+.movie-tabs.nav-tabs .nav-link {
+  margin-bottom: -1px;
+  padding: 0.6rem 1.1rem;
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  color: var(--gray);
+  font-weight: 600;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.movie-tabs.nav-tabs .nav-link:hover {
+  color: var(--white);
+  border-bottom-color: var(--dark);
+}
+
+.movie-tabs.nav-tabs .nav-link.active {
+  background: transparent;
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.movie-tabs.nav-tabs .nav-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.owned-section {
+  margin-bottom: 2.5rem;
+}
+
+.section-title {
+  margin: 0 0 1rem;
+  font-size: 1.3rem;
+  color: var(--accent);
+}
+
 .message {
   color: var(--gray);
 }

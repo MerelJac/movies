@@ -15,7 +15,7 @@ function formatDate(release) {
       });
 }
 
-export default function MovieCard({ movie }) {
+export default function MovieCard({ movie, isOwned = false, onToggleOwn }) {
   return (
     <article className="movie-card">
       {movie.poster_path ? (
@@ -34,6 +34,16 @@ export default function MovieCard({ movie }) {
         <p className="movie-overview">
           {movie.overview || 'No overview available.'}
         </p>
+        {onToggleOwn && (
+          <button
+            type="button"
+            className={`own-button${isOwned ? ' own-button--owned' : ''}`}
+            aria-pressed={isOwned}
+            onClick={() => onToggleOwn(movie)}
+          >
+            {isOwned ? '✓ Owned' : '+ I own this'}
+          </button>
+        )}
       </div>
     </article>
   );
