@@ -1,5 +1,7 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
 @import "tailwindcss";
-/* Palette pulled from stepstonegroup.com (see project-root styles.css) */
+/* Palette inspiration pulled from stepstonegroup.com */
+
 :root {
   --accent: #daff96;
   --darkest: #191f23;
@@ -16,7 +18,7 @@ body {
   margin: 0;
   background: var(--darkest);
   color: var(--white);
-  font-family: "Octave", system-ui, sans-serif;
+  font-family: "Montserrat", sans-serif;
   line-height: 1.5;
 }
 
@@ -94,7 +96,7 @@ body {
 }
 
 .app {
-  max-width: 760px;
+  max-width: 60%;
   margin: 0 auto;
   padding: 2.5rem 1.25rem 4rem;
 }
@@ -154,6 +156,43 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+
+/* Carousel of MovieCardSimple. Default: cards stack and wrap. */
+.movie-carousel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.movie-carousel > .movie-card {
+  flex: 1 1 280px;
+}
+
+/* Horizontal variant: one scrolling row of fixed-width cards. */
+.movie-carousel--horizontal {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 0.5rem; /* room for the scrollbar */
+  -webkit-overflow-scrolling: touch;
+}
+
+.movie-carousel--horizontal > .movie-card {
+  flex: 0 0 300px;
+  scroll-snap-align: start;
+}
+
+/* The horizontal carousel wraps a single .movie-grid. Override the grid's
+   wrapping layout so its squares form one scrolling row instead of stacking. */
+.movie-carousel--horizontal > .movie-grid {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.movie-carousel--horizontal > .movie-grid > .movie-square {
+  flex: 0 0 180px;
+  scroll-snap-align: start;
 }
 
 .movie-card {

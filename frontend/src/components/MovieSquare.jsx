@@ -1,5 +1,5 @@
 import { POSTER_BASE } from "../constants";
-import { formatDate } from "../utils";
+import { formatDate, isReleased } from "../utils";
 
 export default function MovieSquare({ movie, isOwned = false, onToggleOwn, onSelect }) {
   return (
@@ -25,7 +25,7 @@ export default function MovieSquare({ movie, isOwned = false, onToggleOwn, onSel
         <p className="movie-square__overview">
           {movie.overview || "No overview available."}
         </p>
-        {onToggleOwn && (
+        {onToggleOwn && isReleased(movie) && (
           <button
             type="button"
             className={`own-button${isOwned ? " own-button--owned" : ""}`}

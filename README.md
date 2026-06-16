@@ -73,3 +73,7 @@ MovieStats.jsx
 update this so that if you click a genre, it filters 'owned movies' to display only owned movies of that genre 
 
 movie-stats__genres
+
+- make a movieCaousel that accepts movieCardSimple and has the option to horizonal scroll but by defaut does not. use current naming conventions and styling.
+
+- i want to cache this api request but waht are my optiosn since I don't have persistance in the DB?

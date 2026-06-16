@@ -78,6 +78,45 @@ class MovieController extends Controller
         return response()->json($results);
     }
 
+
+    /**
+     * GET /api/movies/upcoming?page=1
+     */
+    public function upcoming(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'page' => ['sometimes', 'integer', 'min:1'],
+        ]);
+
+        $page = $validated['page'] ?? 1;
+        $cacheKey = "tmdb.upcoming.page.{$page}";
+
+        // TMDB's upcoming list changes slowly, so cache it to avoid hitting the
+        // API on every request. The file store needs no database.
+        $cached = Cache::store('file')->has($cacheKey);
+
+        try {
+            $results = Cache::store('file')->remember(
+                $cacheKey,
+                now()->addHours(6),
+                fn () => $this->tmdb->upcomingMovies($page),
+            );
+        } catch (RequestException $e) {
+            return response()->json(
+                ['message' => 'Unable to reach The Movie DB. Please try again.'],
+                502,
+            );
+        }
+
+        Log::info('upcoming movies served', [
+            'page' => $page,
+            'count' => count($results['results'] ?? []),
+            'source' => $cached ? 'cache' : 'api',
+        ]);
+
+        return response()->json($results);
+    }
+
     /**
      * GET /api/genre/movie/list
      *

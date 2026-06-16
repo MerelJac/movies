@@ -28,6 +28,19 @@ export async function popularMovies() {
   return res.json();
 }
 
+export async function upcomingMovies() {
+  const res = await fetch(`/api/movies/upcoming`, {
+    headers: { Accept: "application/json" },
+  });
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.message || `Search failed (${res.status})`);
+  }
+
+  return res.json();
+}
+
 // Fetches TMDB's genre id => name map (cached server-side). Returns the map
 // object, e.g. { 28: "Action", ... }.
 export async function fetchGenres() {

@@ -7,16 +7,25 @@ import MovieModal from "./components/MovieModal.jsx";
 import MovieStats from "./components/MovieStats.jsx";
 import Pagination from "react-bootstrap/Pagination";
 import PopularMovieBanner from "./components/PopularMovieBanner.tsx";
-import { popularMovies, searchMovies, fetchGenres } from "./api.js";
+import {
+  popularMovies,
+  searchMovies,
+  fetchGenres,
+  upcomingMovies,
+} from "./api.js";
 import { sortMovies, movieGenres } from "./utils.js";
 import { SORT_OPTIONS } from "./constants.js";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
+import MovieCarousel from "./components/MovieCarousel.jsx";
 
 export default function App() {
   const [results, setResults] = useState(null); // null = no search yet
   const [popularResults, setPopularResults] = useState(null);
+  const [upcomingResults, setUpcomingResults] = useState(null);
   const [movieDisplay, setMovieDisplay] = useState("list");
+  // Which tab is active; drives whether the Popular/Upcoming sections show.
+  const [activeTab, setActiveTab] = useState("all");
   // Client-side sort for search results; defaults to newest first.
   const [sortKey, setSortKey] = useState("release_desc");
   // TMDB genre id => name map, fetched once on mount for the owned stats.
@@ -165,6 +174,15 @@ export default function App() {
         // Banner is non-critical; ignore failures so search still works.
         if (active) setPopularResults(null);
       });
+
+    upcomingMovies()
+      .then((data) => {
+        if (active) setUpcomingResults(data.results);
+      })
+      .catch(() => {
+        // Banner is non-critical; ignore failures so search still works.
+        if (active) setUpcomingResults(null);
+      });
     return () => {
       active = false;
     };
@@ -196,7 +214,8 @@ export default function App() {
         </header>
 
         <Tabs
-          defaultActiveKey="all"
+          activeKey={activeTab}
+          onSelect={(key) => setActiveTab(key ?? "all")}
           id="movies-tabs"
           transition={false}
           className="movie-tabs"
@@ -299,6 +318,33 @@ export default function App() {
           </Tab>
         </Tabs>
       </section>
+      {activeTab === "all" && (
+      <section className="px-10">
+        {popularResults && (
+          <div>
+            <header className="app-header">
+              <h1 className="pb-4">Popular Movies</h1>
+            </header>
+            <MovieCarousel
+              movies={popularResults}
+              onSelect={setSelectedMovie}
+            />
+          </div>
+        )}
+
+        {upcomingResults && (
+          <div>
+            <header className="app-header">
+              <h1 className="pb-4">Upcoming Movies</h1>
+            </header>
+            <MovieCarousel
+              movies={upcomingResults}
+              onSelect={setSelectedMovie}
+            />
+          </div>
+        )}
+      </section>
+      )}
 
       <MovieModal
         movie={selectedMovie}

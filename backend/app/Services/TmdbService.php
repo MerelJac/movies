@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Services;
 
 use Illuminate\Http\Client\PendingRequest;
@@ -29,18 +28,18 @@ class TmdbService
     {
         $data = $this->request()
             ->get('/search/movie', [
-                'query' => $query,
-                'page' => $page,
+                'query'         => $query,
+                'page'          => $page,
                 'include_adult' => false,
             ])
             ->throw()
             ->json();
 
         return [
-            'page' => $data['page'] ?? 1,
+            'page'          => $data['page'] ?? 1,
             'total_results' => $data['total_results'] ?? 0,
-            'total_pages' => $data['total_pages'] ?? 0,
-            'results' => array_map($this->mapMovie(...), $data['results'] ?? []),
+            'total_pages'   => $data['total_pages'] ?? 0,
+            'results'       => array_map($this->mapMovie(...), $data['results'] ?? []),
         ];
     }
 
@@ -59,11 +58,30 @@ class TmdbService
             ->json();
 
         return [
-            'page' => $data['page'] ?? 1,
+            'page'    => $data['page'] ?? 1,
             'results' => array_map($this->mapMovie(...), $data['results'] ?? []),
         ];
     }
 
+    /**
+     * GET upcoming movies - takes no query.
+     *
+     * @return array{page:int,results:array<int,array<string,mixed>>}
+     */
+    public function upcomingMovies(int $page = 1): array
+    {
+        $data = $this->request()
+            ->get('/movie/upcoming', [
+                'page' => $page,
+            ])
+            ->throw()
+            ->json();
+
+        return [
+            'page'    => $data['page'] ?? 1,
+            'results' => array_map($this->mapMovie(...), $data['results'] ?? []),
+        ];
+    }
 
     /**
      * GET the movie genre list. TMDB returns a flat list; we reshape it into an
@@ -88,7 +106,6 @@ class TmdbService
         return $map;
     }
 
-
     /**
      * Reduce a raw TMDB movie to the fields the frontend uses — for display
      * (title/poster/overview) and for sorting/stats (rating/genres/popularity).
@@ -99,15 +116,15 @@ class TmdbService
     private function mapMovie(array $movie): array
     {
         return [
-            'id' => $movie['id'] ?? null,
-            'title' => $movie['title'] ?? '',
+            'id'           => $movie['id'] ?? null,
+            'title'        => $movie['title'] ?? '',
             'release_date' => $movie['release_date'] ?? null,
-            'overview' => $movie['overview'] ?? '',
-            'poster_path' => $movie['poster_path'] ?? null,
-            'genre_ids' => $movie['genre_ids'] ?? [],
+            'overview'     => $movie['overview'] ?? '',
+            'poster_path'  => $movie['poster_path'] ?? null,
+            'genre_ids'    => $movie['genre_ids'] ?? [],
             'vote_average' => $movie['vote_average'] ?? 0,
-            'vote_count' => $movie['vote_count'] ?? 0,
-            'popularity' => $movie['popularity'] ?? 0,
+            'vote_count'   => $movie['vote_count'] ?? 0,
+            'popularity'   => $movie['popularity'] ?? 0,
         ];
     }
 

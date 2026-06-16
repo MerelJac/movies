@@ -1,6 +1,6 @@
 import Modal from "react-bootstrap/Modal";
 import { POSTER_BASE } from "../constants";
-import { formatDate, movieGenres } from "../utils";
+import { formatDate, movieGenres, isReleased } from "../utils";
 import PopularityIcon from "./PopularityIcon";
 
 // Reusable detail modal. Driven by the `movie` prop: when it's null the modal
@@ -13,7 +13,7 @@ export default function MovieModal({
   genres = {},
 }) {
   const genreNames = movie ? movieGenres(movie, genres) : [];
-
+  console.log('movie', movie)
   return (
     <Modal
       show={movie !== null}
@@ -22,12 +22,12 @@ export default function MovieModal({
       contentClassName="movie-modal"
     >
       {movie && (
-        <>
+        <div>
           <Modal.Header closeButton closeVariant="white">
             <Modal.Title>{movie.title}</Modal.Title>
           </Modal.Header>
           <Modal.Body className="movie-modal__body">
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 max-w-[50%]">
               {movie.poster_path ? (
                 <img
                   className="movie-modal__poster"
@@ -59,7 +59,7 @@ export default function MovieModal({
               <p className="movie-modal__overview">
                 {movie.overview || "No overview available."}
               </p>
-              {onToggleOwn && (
+              {onToggleOwn && isReleased(movie) && (
                 <button
                   type="button"
                   className={`own-button${isOwned ? " own-button--owned" : ""}`}
@@ -71,7 +71,7 @@ export default function MovieModal({
               )}
             </div>
           </Modal.Body>
-        </>
+        </div>
       )}
     </Modal>
   );

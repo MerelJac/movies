@@ -81,9 +81,22 @@ export function computeOwnedStats(movies, genres = {}) {
   };
 }
 
+// Whether a movie has been released as of today. Unreleased (upcoming) movies
+// can't be owned, so callers use this to hide the "I own this" control.
+// Movies with no/invalid release date are treated as released.
+export function isReleased(movie) {
+  const release = movie?.release_date;
+  if (!release) return true;
+  const date = new Date(release);
+  if (Number.isNaN(date.getTime())) return true;
+  return date <= new Date();
+}
+
 export function formatDate(release) {
   if (!release) return "Release date unknown";
-  // TMDB gives YYYY-MM-DD; render it in the user's locale.
+  // TMDB gives YYYY-MM-DD, which Date parses as UTC midnight. Render in UTC too
+  // so the calendar day never shifts in timezones behind UTC (e.g. 2026-06-03
+  // stays "June 3, 2026" rather than slipping to June 2).
   const date = new Date(release);
   return Number.isNaN(date.getTime())
     ? release
@@ -91,5 +104,6 @@ export function formatDate(release) {
         year: "numeric",
         month: "long",
         day: "numeric",
+        timeZone: "UTC",
       });
 }
