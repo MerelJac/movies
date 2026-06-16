@@ -49,6 +49,9 @@ cd frontend && npm run dev
 
 then open: http://localhost:5173/
 
+## Debugging
+Check backend/storage/logs/laravel.log
+
 # Assignment Instructions
 
 **The Movie DB Prototype**
@@ -101,3 +104,6 @@ Please return your completed project within 4 days.
 
 **Caching API requests without a database**
 > I want to cache this API request but I have no database — what are my options?
+
+**Extend instructions for windows**
+> I work on a mac and these are instructions for another developer to spin up the app. Expand these instructions to be compatible with windows.
