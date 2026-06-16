@@ -2,13 +2,14 @@
 
 ## System requirements
 
-- **PHP 8.4+** — install via Homebrew: `brew install php`
-- **Composer 2** — install via Homebrew: `brew install composer`
+- **PHP 8.4+** — install via Homebrew: `brew install php` - install via windows: `winget install --id PHP.PHP.8.4 -e` - check version with `php -v`
+- **Composer 2** — install via Homebrew: `brew install composer` - install via windows: `winget install Composer.Composer`- check version with `composer --version`
 - **Node.js 22** — the frontend requires Node 20+ (Tailwind v4 drops Node 18). Use nvm to match the pinned version:
 ```bash
   cd frontend && nvm use
 ```
   If you don't have nvm: https://github.com/nvm-sh/nvm
+  Or install via windows: `winget install --id OpenJS.NodeJS.22 -e`
 
 ## Setup
 
@@ -20,6 +21,12 @@
 2. **Add backend environment file**
 ```bash
    cd backend && cp .env.example .env
+```
+   Then fill in the required values (ask a teammate for credentials).
+
+3 **Install backend dependencies**
+```bash
+   cd backend && composer install
 ```
    Then fill in the required values (ask a teammate for credentials).
 
