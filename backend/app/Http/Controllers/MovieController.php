@@ -77,4 +77,28 @@ class MovieController extends Controller
 
         return response()->json($results);
     }
+
+    /**
+     * GET /api/genre/movie/list
+     *
+     * Returns TMDB's genre id => name map. The list almost never changes, so
+     * cache it for a week to avoid hitting the API on every page load.
+     */
+    public function getGenres(): JsonResponse
+    {
+        try {
+            $genres = Cache::store('file')->remember(
+                'tmdb.genres',
+                now()->addWeek(),
+                fn () => $this->tmdb->getGenres(),
+            );
+        } catch (RequestException $e) {
+            return response()->json(
+                ['message' => 'Unable to reach The Movie DB. Please try again.'],
+                502,
+            );
+        }
+
+        return response()->json(['genres' => $genres]);
+    }
 }

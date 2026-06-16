@@ -4,24 +4,31 @@
   - `brew install composer`
     - Composer version 2.10.1
     - PHP version 8.4.5
-  - `npm install`
+  - **Node.js 20 or newer** (Tailwind v4's build engine requires it; on Node 18
+    `npm run dev` fails with a `@tailwindcss/oxide` "Cannot find native binding"
+    error). The frontend pins this in `frontend/.nvmrc`, so with nvm:
+    - `cd frontend && nvm use` (uses Node 22 per `.nvmrc`)
+  - `cd frontend && npm install`
 
 - Add env files to backend
   - `cd backend && cat .env` (from what was shared separately)
 
 ### Open questions
-- Rate limiting?
-- Caching?
-- filtering
-- click into movie -> modal?
-- sorting
+
+
 - light and dark mode
-- list vs grid view
+
 - ai insights
 - watched vs time watched
 - create playlists
 - mobile
-- popular this week / trending 
+- popular this week / trending
+- done: Rate limiting?
+- done: Caching?
+- done:filtering
+- done:click into movie -> modal?
+- done:sorting
+- done: list vs grid view
 
 # To Run
 
@@ -29,6 +36,7 @@
 cd backend && php artisan serve
 cd frontend && npm run dev
 ```
+
 then open: http://localhost:5173/
 
 # Assignment Instructions
@@ -56,3 +64,12 @@ When you have completed and submitted your code it should meet the following req
 - Pagination is not required, but it's nice to have.
 
 Please return your completed project within 4 days.
+
+
+## AI Models
+Claude 
+- Example prompt:
+MovieStats.jsx
+update this so that if you click a genre, it filters 'owned movies' to display only owned movies of that genre 
+
+movie-stats__genres

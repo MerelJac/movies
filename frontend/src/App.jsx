@@ -3,9 +3,13 @@ import SearchBar from "./components/SearchBar.jsx";
 import MovieList from "./components/MovieList.jsx";
 import MovieGrid from "./components/MovieGrid.jsx";
 import ViewToggle from "./components/ViewToggle.jsx";
+import MovieModal from "./components/MovieModal.jsx";
+import MovieStats from "./components/MovieStats.jsx";
 import Pagination from "react-bootstrap/Pagination";
 import PopularMovieBanner from "./components/PopularMovieBanner.tsx";
-import { popularMovies, searchMovies } from "./api.js";
+import { popularMovies, searchMovies, fetchGenres } from "./api.js";
+import { sortMovies, movieGenres } from "./utils.js";
+import { SORT_OPTIONS } from "./constants.js";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 
@@ -13,6 +17,12 @@ export default function App() {
   const [results, setResults] = useState(null); // null = no search yet
   const [popularResults, setPopularResults] = useState(null);
   const [movieDisplay, setMovieDisplay] = useState("list");
+  // Client-side sort for search results; defaults to newest first.
+  const [sortKey, setSortKey] = useState("release_desc");
+  // TMDB genre id => name map, fetched once on mount for the owned stats.
+  const [genres, setGenres] = useState({});
+  // Movie shown in the detail modal; null = modal closed.
+  const [selectedMovie, setSelectedMovie] = useState(null);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -40,18 +50,32 @@ export default function App() {
   // Local filter for the "Your Movies" tab — searches the owned list
   // in-memory, no API call.
   const [ownedQuery, setOwnedQuery] = useState("");
+  // Genre to filter the owned list by, set by clicking a stats pill.
+  // null = no genre filter.
+  const [genreFilter, setGenreFilter] = useState(null);
 
   // Pick the layout component from the toggle state. Both share the same
   // { movies, ownedIds, onToggleOwn, limit } props.
   const MovieView = movieDisplay === "grid" ? MovieGrid : MovieList;
 
+  // Sort the current page of results client-side (TMDB search can't sort).
+  const sortedResults = results ? sortMovies(results, sortKey) : results;
+
   const ownedIds = new Set(owned.keys());
   const ownedMovies = [...owned.values()];
-  const filteredOwned = ownedQuery.trim()
-    ? ownedMovies.filter((m) =>
-        m.title.toLowerCase().includes(ownedQuery.trim().toLowerCase()),
-      )
-    : ownedMovies;
+  const ownedSearch = ownedQuery.trim().toLowerCase();
+  const filteredOwned = ownedMovies.filter((m) => {
+    const matchesQuery =
+      !ownedSearch || m.title.toLowerCase().includes(ownedSearch);
+    const matchesGenre =
+      !genreFilter || movieGenres(m, genres).includes(genreFilter);
+    return matchesQuery && matchesGenre;
+  });
+
+  // Toggle the genre filter: clicking the active genre clears it.
+  function toggleGenreFilter(name) {
+    setGenreFilter((current) => (current === name ? null : name));
+  }
 
   async function runSearch(q, p = 1) {
     setLoading(true);
@@ -146,6 +170,22 @@ export default function App() {
     };
   }, []);
 
+  // Genre map for the owned-movie stats. Fetched once; cached on the backend.
+  useEffect(() => {
+    let active = true;
+    fetchGenres()
+      .then((map) => {
+        if (active) setGenres(map);
+      })
+      .catch(() => {
+        // Stats degrade gracefully without genres; leave the map empty.
+        if (active) setGenres({});
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
   return (
     <div>
       {popularResults && <PopularMovieBanner popularMovies={popularResults} />}
@@ -172,14 +212,30 @@ export default function App() {
                   <p className="message">No movies found.</p>
                 ) : (
                   <>
-                    <ViewToggle
-                      value={movieDisplay}
-                      onChange={setMovieDisplay}
-                    />
+                    <div className="results-controls">
+                      <ViewToggle
+                        value={movieDisplay}
+                        onChange={setMovieDisplay}
+                      />
+                      <label className="sort-select">
+                        Sort by
+                        <select
+                          value={sortKey}
+                          onChange={(e) => setSortKey(e.target.value)}
+                        >
+                          {SORT_OPTIONS.map((opt) => (
+                            <option key={opt.key} value={opt.key}>
+                              {opt.label}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                    </div>
                     <MovieView
-                      movies={results}
+                      movies={sortedResults}
                       ownedIds={ownedIds}
                       onToggleOwn={toggleOwned}
+                      onSelect={setSelectedMovie}
                     />
                   </>
                 )}
@@ -203,6 +259,13 @@ export default function App() {
             )}
           </Tab>
           <Tab eventKey="owned" title={`Your Movies (${ownedMovies.length})`}>
+            <MovieStats
+              movies={ownedMovies}
+              genres={genres}
+              activeGenre={genreFilter}
+              onSelectGenre={toggleGenreFilter}
+            />
+
             <SearchBar
               placeholder="Filter your movies…"
               onChange={setOwnedQuery}
@@ -215,7 +278,12 @@ export default function App() {
                 Search Movies tab.
               </p>
             ) : filteredOwned.length === 0 ? (
-              <p className="message">No marked movies match “{ownedQuery}”.</p>
+              <p className="message">
+                No marked movies match
+                {ownedQuery.trim() && ` “${ownedQuery}”`}
+                {ownedQuery.trim() && genreFilter && " in"}
+                {genreFilter && ` ${genreFilter}`}.
+              </p>
             ) : (
               <>
                 <ViewToggle value={movieDisplay} onChange={setMovieDisplay} />
@@ -223,6 +291,7 @@ export default function App() {
                   movies={filteredOwned}
                   ownedIds={ownedIds}
                   onToggleOwn={toggleOwned}
+                  onSelect={setSelectedMovie}
                   limit={Infinity}
                 />
               </>
@@ -230,6 +299,14 @@ export default function App() {
           </Tab>
         </Tabs>
       </section>
+
+      <MovieModal
+        movie={selectedMovie}
+        isOwned={selectedMovie ? ownedIds.has(selectedMovie.id) : false}
+        onToggleOwn={toggleOwned}
+        onClose={() => setSelectedMovie(null)}
+        genres={genres}
+      />
     </div>
   );
 }

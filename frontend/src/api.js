@@ -27,3 +27,19 @@ export async function popularMovies() {
 
   return res.json();
 }
+
+// Fetches TMDB's genre id => name map (cached server-side). Returns the map
+// object, e.g. { 28: "Action", ... }.
+export async function fetchGenres() {
+  const res = await fetch(`/api/genre/movie/list`, {
+    headers: { Accept: "application/json" },
+  });
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.message || `Genre fetch failed (${res.status})`);
+  }
+
+  const data = await res.json();
+  return data.genres ?? {};
+}

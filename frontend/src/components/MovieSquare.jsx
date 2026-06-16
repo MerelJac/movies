@@ -1,9 +1,12 @@
 import { POSTER_BASE } from "../constants";
 import { formatDate } from "../utils";
 
-export default function MovieSquare({ movie, isOwned = false, onToggleOwn }) {
+export default function MovieSquare({ movie, isOwned = false, onToggleOwn, onSelect }) {
   return (
-    <article className="movie-square">
+    <article
+      className="movie-square"
+      onClick={onSelect ? () => onSelect(movie) : undefined}
+    >
       {movie.poster_path ? (
         <img
           className="movie-square__poster"
@@ -27,7 +30,10 @@ export default function MovieSquare({ movie, isOwned = false, onToggleOwn }) {
             type="button"
             className={`own-button${isOwned ? " own-button--owned" : ""}`}
             aria-pressed={isOwned}
-            onClick={() => onToggleOwn(movie)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleOwn(movie);
+            }}
           >
             {isOwned ? "✓ Owned" : "+ I own this"}
           </button>
