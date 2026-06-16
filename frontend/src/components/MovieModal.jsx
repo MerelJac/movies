@@ -9,6 +9,8 @@ export default function MovieModal({
   movie,
   isOwned = false,
   onToggleOwn,
+  inWatchlist = false,
+  onToggleWatch,
   onClose,
   genres = {},
 }) {
@@ -59,16 +61,28 @@ export default function MovieModal({
               <p className="movie-modal__overview">
                 {movie.overview || "No overview available."}
               </p>
-              {onToggleOwn && isReleased(movie) && (
-                <button
-                  type="button"
-                  className={`own-button${isOwned ? " own-button--owned" : ""}`}
-                  aria-pressed={isOwned}
-                  onClick={() => onToggleOwn(movie)}
-                >
-                  {isOwned ? "✓ Owned" : "+ I own this"}
-                </button>
-              )}
+              <div className="movie-actions">
+                {onToggleOwn && isReleased(movie) && (
+                  <button
+                    type="button"
+                    className={`own-button${isOwned ? " own-button--owned" : ""}`}
+                    aria-pressed={isOwned}
+                    onClick={() => onToggleOwn(movie)}
+                  >
+                    {isOwned ? "✓ Owned" : "+ I own this"}
+                  </button>
+                )}
+                {onToggleWatch && (
+                  <button
+                    type="button"
+                    className={`watch-button${inWatchlist ? " watch-button--added" : ""}`}
+                    aria-pressed={inWatchlist}
+                    onClick={() => onToggleWatch(movie)}
+                  >
+                    {inWatchlist ? "✓ Watchlist" : "+ Watchlist"}
+                  </button>
+                )}
+              </div>
             </div>
           </Modal.Body>
         </div>

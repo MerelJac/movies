@@ -46,7 +46,7 @@ Check backend/storage/logs/laravel.log
 
 # Assignment Instructions
 
-**The Movie DB Prototype**
+**The Movie Database**
 
 We need to prototype an application that searches movies by name which makes use of The Movie DB's API (https://www.themoviedb.org/). You do not need to build out an entire registration/login feature
 
@@ -78,8 +78,8 @@ Please return your completed project within 4 days.
 - Filtering and Sorting on Search list. 
 - Click a movie to open modal with more details
 - List vs Grid View
+- Watchlist tab
 - "My Movies" Summary Tab for user insights
-
 
 # AI Models
 

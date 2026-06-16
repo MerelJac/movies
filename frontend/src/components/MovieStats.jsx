@@ -3,6 +3,7 @@ import { computeOwnedStats } from "../utils";
 // Summary panel for the "Your Movies" tab. Renders nothing when the owned
 // list is empty.
 export default function MovieStats({
+  type,
   movies,
   genres,
   activeGenre = null,
@@ -21,22 +22,24 @@ export default function MovieStats({
 
   return (
     <section className="movie-stats" aria-label="Your movie stats">
-      <div className="movie-stats__cards">
-        <div className="movie-stats__card">
-          <span className="movie-stats__value">{count}</span>
-          <span className="movie-stats__label">Movies owned</span>
+      {type === "owned" && (
+        <div className="movie-stats__cards">
+          <div className="movie-stats__card">
+            <span className="movie-stats__value">{count}</span>
+            <span className="movie-stats__label">Movies owned</span>
+          </div>
+          <div className="movie-stats__card">
+            <span className="movie-stats__value">
+              {averageRating !== null ? averageRating.toFixed(1) : "—"}
+            </span>
+            <span className="movie-stats__label">Avg. rating</span>
+          </div>
+          <div className="movie-stats__card">
+            <span className="movie-stats__value">{yearRange}</span>
+            <span className="movie-stats__label">Release years</span>
+          </div>
         </div>
-        <div className="movie-stats__card">
-          <span className="movie-stats__value">
-            {averageRating !== null ? averageRating.toFixed(1) : "—"}
-          </span>
-          <span className="movie-stats__label">Avg. rating</span>
-        </div>
-        <div className="movie-stats__card">
-          <span className="movie-stats__value">{yearRange}</span>
-          <span className="movie-stats__label">Release years</span>
-        </div>
-      </div>
+      )}
 
       {topGenres.length > 0 && (
         <div className="movie-stats__genres">

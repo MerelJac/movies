@@ -1,7 +1,7 @@
 import { POSTER_BASE } from "../constants";
 import { formatDate, isReleased } from "../utils";
 
-export default function MovieSquare({ movie, isOwned = false, onToggleOwn, onSelect }) {
+export default function MovieSquare({ movie, isOwned = false, onToggleOwn, inWatchlist = false, onToggleWatch, onSelect }) {
   return (
     <article
       className="movie-square"
@@ -25,19 +25,34 @@ export default function MovieSquare({ movie, isOwned = false, onToggleOwn, onSel
         <p className="movie-square__overview">
           {movie.overview || "No overview available."}
         </p>
-        {onToggleOwn && isReleased(movie) && (
-          <button
-            type="button"
-            className={`own-button${isOwned ? " own-button--owned" : ""}`}
-            aria-pressed={isOwned}
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggleOwn(movie);
-            }}
-          >
-            {isOwned ? "✓ Owned" : "+ I own this"}
-          </button>
-        )}
+        <div className="movie-actions">
+          {onToggleOwn && isReleased(movie) && (
+            <button
+              type="button"
+              className={`own-button${isOwned ? " own-button--owned" : ""}`}
+              aria-pressed={isOwned}
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleOwn(movie);
+              }}
+            >
+              {isOwned ? "✓ Owned" : "+ I own this"}
+            </button>
+          )}
+          {onToggleWatch && (
+            <button
+              type="button"
+              className={`watch-button${inWatchlist ? " watch-button--added" : ""}`}
+              aria-pressed={inWatchlist}
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleWatch(movie);
+              }}
+            >
+              {inWatchlist ? "✓ Watchlist" : "+ Watchlist"}
+            </button>
+          )}
+        </div>
       </div>
     </article>
   );

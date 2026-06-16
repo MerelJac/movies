@@ -43,6 +43,21 @@ export default function App() {
   // across searches. Persistence to a backend is not required
   // but API call would be the option
   const [owned, setOwned] = useState(() => new Map());
+  // Movies the user added to their watchlist, keyed by id — same shape and
+  // lifetime as `owned`, just a separate list.
+  const [watchlist, setWatchlist] = useState(() => new Map());
+
+  function toggleWatch(movie) {
+    setWatchlist((prev) => {
+      const next = new Map(prev);
+      if (next.has(movie.id)) {
+        next.delete(movie.id);
+      } else {
+        next.set(movie.id, movie);
+      }
+      return next;
+    });
+  }
 
   function toggleOwned(movie) {
     setOwned((prev) => {
@@ -59,9 +74,12 @@ export default function App() {
   // Local filter for the "Your Movies" tab — searches the owned list
   // in-memory, no API call.
   const [ownedQuery, setOwnedQuery] = useState("");
-  // Genre to filter the owned list by, set by clicking a stats pill.
-  // null = no genre filter.
-  const [genreFilter, setGenreFilter] = useState(null);
+  // Local filter for the "Watchlist" tab
+  const [watchQuery, setWatchQuery] = useState("");
+  // Genre to filter each list by, set by clicking a stats pill. Kept separate
+  // per tab so a selection in one doesn't bleed into the other. null = no filter.
+  const [ownedGenreFilter, setOwnedGenreFilter] = useState(null);
+  const [watchGenreFilter, setWatchGenreFilter] = useState(null);
 
   // Pick the layout component from the toggle state. Both share the same
   // { movies, ownedIds, onToggleOwn, limit } props.
@@ -77,14 +95,28 @@ export default function App() {
     const matchesQuery =
       !ownedSearch || m.title.toLowerCase().includes(ownedSearch);
     const matchesGenre =
-      !genreFilter || movieGenres(m, genres).includes(genreFilter);
+      !ownedGenreFilter || movieGenres(m, genres).includes(ownedGenreFilter);
     return matchesQuery && matchesGenre;
   });
 
-  // Toggle the genre filter: clicking the active genre clears it.
-  function toggleGenreFilter(name) {
-    setGenreFilter((current) => (current === name ? null : name));
+  const watchIds = new Set(watchlist.keys());
+  const watchlistMovies = [...watchlist.values()];
+  const watchSearch = watchQuery.trim().toLowerCase();
+  const filteredWatchlist = watchlistMovies.filter((m) => {
+    const matchesQuery =
+      !watchSearch || m.title.toLowerCase().includes(watchSearch);
+    const matchesGenre =
+      !watchGenreFilter || movieGenres(m, genres).includes(watchGenreFilter);
+    return matchesQuery && matchesGenre;
+  });
+
+  // Toggle a genre filter setter: clicking the active genre clears it.
+  function makeGenreToggle(setFilter) {
+    return (name) =>
+      setFilter((current) => (current === name ? null : name));
   }
+  const toggleOwnedGenre = makeGenreToggle(setOwnedGenreFilter);
+  const toggleWatchGenre = makeGenreToggle(setWatchGenreFilter);
 
   async function runSearch(q, p = 1) {
     setLoading(true);
@@ -207,9 +239,9 @@ export default function App() {
   return (
     <div>
       {popularResults && <PopularMovieBanner popularMovies={popularResults} />}
-      <section className="app">
+      <section className="app sm:max-w-[100%] w-[60%]">
         <header className="app-header">
-          <h1>The Movie DB Prototype</h1>
+          <h1>Movie Database</h1>
           <p className="subtitle">Search movies by name.</p>
         </header>
 
@@ -254,6 +286,8 @@ export default function App() {
                       movies={sortedResults}
                       ownedIds={ownedIds}
                       onToggleOwn={toggleOwned}
+                      watchIds={watchIds}
+                      onToggleWatch={toggleWatch}
                       onSelect={setSelectedMovie}
                     />
                   </>
@@ -277,12 +311,54 @@ export default function App() {
               </>
             )}
           </Tab>
+          <Tab eventKey="watch" title={`Watchlist (${watchlistMovies.length})`}>
+            <MovieStats
+            type={"watch"}
+              movies={watchlistMovies}
+              genres={genres}
+              activeGenre={watchGenreFilter}
+              onSelectGenre={toggleWatchGenre}
+            />
+
+            <SearchBar
+              placeholder="Filter your watchlist"
+              onChange={setWatchQuery}
+              onSearch={setWatchQuery}
+            />
+
+            {watchlistMovies.length === 0 ? (
+              <p className="message">
+                Your watchlist is empty. Add movies from the Search Movies tab.
+              </p>
+            ) : filteredWatchlist.length === 0 ? (
+              <p className="message">
+                No watchlist movies match
+                {watchQuery.trim() && ` “${watchQuery}”`}
+                {watchQuery.trim() && watchGenreFilter && " in"}
+                {watchGenreFilter && ` ${watchGenreFilter}`}.
+              </p>
+            ) : (
+              <>
+                <ViewToggle value={movieDisplay} onChange={setMovieDisplay} />
+                <MovieView
+                  movies={filteredWatchlist}
+                  ownedIds={ownedIds}
+                  onToggleOwn={toggleOwned}
+                  watchIds={watchIds}
+                  onToggleWatch={toggleWatch}
+                  onSelect={setSelectedMovie}
+                  limit={Infinity}
+                />
+              </>
+            )}
+          </Tab>
           <Tab eventKey="owned" title={`Your Movies (${ownedMovies.length})`}>
             <MovieStats
+            type={"owned"}
               movies={ownedMovies}
               genres={genres}
-              activeGenre={genreFilter}
-              onSelectGenre={toggleGenreFilter}
+              activeGenre={ownedGenreFilter}
+              onSelectGenre={toggleOwnedGenre}
             />
 
             <SearchBar
@@ -293,15 +369,15 @@ export default function App() {
 
             {ownedMovies.length === 0 ? (
               <p className="message">
-                You haven't marked any movies yet. Mark movies as owned from the
+                You haven't marked any movies as owned yet. Mark movies as owned from the
                 Search Movies tab.
               </p>
             ) : filteredOwned.length === 0 ? (
               <p className="message">
                 No marked movies match
                 {ownedQuery.trim() && ` “${ownedQuery}”`}
-                {ownedQuery.trim() && genreFilter && " in"}
-                {genreFilter && ` ${genreFilter}`}.
+                {ownedQuery.trim() && ownedGenreFilter && " in"}
+                {ownedGenreFilter && ` ${ownedGenreFilter}`}.
               </p>
             ) : (
               <>
@@ -310,6 +386,8 @@ export default function App() {
                   movies={filteredOwned}
                   ownedIds={ownedIds}
                   onToggleOwn={toggleOwned}
+                  watchIds={watchIds}
+                  onToggleWatch={toggleWatch}
                   onSelect={setSelectedMovie}
                   limit={Infinity}
                 />
@@ -350,6 +428,8 @@ export default function App() {
         movie={selectedMovie}
         isOwned={selectedMovie ? ownedIds.has(selectedMovie.id) : false}
         onToggleOwn={toggleOwned}
+        inWatchlist={selectedMovie ? watchIds.has(selectedMovie.id) : false}
+        onToggleWatch={toggleWatch}
         onClose={() => setSelectedMovie(null)}
         genres={genres}
       />
