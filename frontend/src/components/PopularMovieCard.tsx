@@ -1,5 +1,5 @@
-// One poster in the popular-movies banner.
-const POSTER_BASE = 'https://image.tmdb.org/t/p/w185';
+import { POSTER_BASE } from "../constants";
+
 
 interface Movie {
   id: number;

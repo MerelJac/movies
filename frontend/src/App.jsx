@@ -7,13 +7,10 @@ import { popularMovies, searchMovies } from "./api.js";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 
-// TMDB rejects page numbers above 500.
-const MAX_TMDB_PAGE = 500;
-
 export default function App() {
   const [results, setResults] = useState(null); // null = no search yet
   const [popularResults, setPopularResults] = useState(null);
-
+  const [movieDisplay, setMovieDisplay] = useState("list");
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -57,7 +54,7 @@ export default function App() {
       const data = await searchMovies(q, p);
       setResults(data.results);
       setTotal(data.total_results);
-      setTotalPages(Math.min(data.total_pages ?? 0, MAX_TMDB_PAGE));
+      setTotalPages(data.total_pages ?? 0);
       setPage(data.page ?? p);
       setQuery(q);
     } catch (err) {
@@ -95,7 +92,8 @@ export default function App() {
           1
         </Pagination.Item>,
       );
-      if (start > 2) items.push(<Pagination.Ellipsis key="start-gap" disabled />);
+      if (start > 2)
+        items.push(<Pagination.Ellipsis key="start-gap" disabled />);
     }
 
     for (let p = start; p <= end; p += 1) {
@@ -143,7 +141,7 @@ export default function App() {
   }, []);
 
   return (
-    <div >
+    <div>
       {popularResults && <PopularMovieBanner popularMovies={popularResults} />}
       <section className="app">
         <header className="app-header">
@@ -157,7 +155,7 @@ export default function App() {
           transition={false}
           className="movie-tabs"
         >
-          <Tab eventKey="all" title="Search Results">
+          <Tab eventKey="all" title="Search Movies">
             <SearchBar onSearch={handleSearch} loading={loading} />
 
             {error && <p className="message error">{error}</p>}
@@ -202,7 +200,7 @@ export default function App() {
             {ownedMovies.length === 0 ? (
               <p className="message">
                 You haven't marked any movies yet. Mark movies as owned from the
-                Search Results tab.
+                Search Movies tab.
               </p>
             ) : filteredOwned.length === 0 ? (
               <p className="message">No marked movies match “{ownedQuery}”.</p>

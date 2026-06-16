@@ -319,3 +319,60 @@ body {
   color: var(--gray);
   opacity: 0.5;
 }
+
+.movie-square {
+  position: relative;
+  aspect-ratio: 1 / 1;     /* the square */
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #1a1a1a;
+}
+
+.movie-square__poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;       /* fill the square, crop overflow */
+  display: block;
+}
+
+.movie-square__poster--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+  font-size: 0.9rem;
+}
+
+/* info overlaid on the bottom with a gradient scrim */
+.movie-square__info {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 0.75rem;
+  background: linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0));
+  color: #fff;
+}
+
+.movie-square__title {
+  margin: 0 0 0.15rem;
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.movie-square__date {
+  margin: 0 0 0.4rem;
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.movie-square__overview {
+  margin: 0 0 0.5rem;
+  font-size: 0.8rem;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;    /* trim long overviews */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

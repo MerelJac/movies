@@ -12,6 +12,16 @@
 ### Open questions
 - Rate limiting?
 - Caching?
+- filtering
+- click into movie -> modal?
+- sorting
+- light and dark mode
+- list vs grid view
+- ai insights
+- watched vs time watched
+- create playlists
+- mobile
+- popular this week / trending 
 
 # To Run
 
@@ -19,6 +29,7 @@
 cd backend && php artisan serve
 cd frontend && npm run dev
 ```
+then open: http://localhost:5173/
 
 # Assignment Instructions
 
