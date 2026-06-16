@@ -13,7 +13,9 @@ export default function MovieModal({
   genres = {},
 }) {
   const genreNames = movie ? movieGenres(movie, genres) : [];
-  console.log('movie', movie)
+  // Save for testing - TODO: delete before prod
+  // console.log('movie', movie)
+  
   return (
     <Modal
       show={movie !== null}

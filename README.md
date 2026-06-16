@@ -1,34 +1,37 @@
-# Prereqs
+# Prerequisites
 
-- Ensure correct versions. I am using macOS
-  - `brew install composer`
-    - Composer version 2.10.1
-    - PHP version 8.4.5
-  - **Node.js 20 or newer** (Tailwind v4's build engine requires it; on Node 18
-    `npm run dev` fails with a `@tailwindcss/oxide` "Cannot find native binding"
-    error). The frontend pins this in `frontend/.nvmrc`, so with nvm:
-    - `cd frontend && nvm use` (uses Node 22 per `.nvmrc`)
-  - `cd frontend && npm install`
+## System requirements
 
-- Add env files to backend
-  - `cd backend && cat .env` (from what was shared separately)
+- **PHP 8.4+** — install via Homebrew: `brew install php`
+- **Composer 2** — install via Homebrew: `brew install composer`
+- **Node.js 22** — the frontend requires Node 20+ (Tailwind v4 drops Node 18). Use nvm to match the pinned version:
+```bash
+  cd frontend && nvm use
+```
+  If you don't have nvm: https://github.com/nvm-sh/nvm
 
-### Open questions
+## Setup
 
+1. **Install frontend dependencies**
+```bash
+   cd frontend && npm install
+```
 
-- light and dark mode
+2. **Add backend environment file**
+```bash
+   cd backend && cp .env.example .env
+```
+   Then fill in the required values (ask a teammate for credentials).
 
-- ai insights
-- watched vs time watched
-- create playlists
-- mobile
-- popular this week / trending
-- done: Rate limiting?
-- done: Caching?
-- done:filtering
-- done:click into movie -> modal?
-- done:sorting
-- done: list vs grid view
+## Running the app
+
+```bash
+# Terminal 1 — backend
+cd backend && php artisan server
+
+# Terminal 2 — frontend
+cd frontend && npm run dev
+```
 
 # To Run
 
@@ -65,15 +68,29 @@ When you have completed and submitted your code it should meet the following req
 
 Please return your completed project within 4 days.
 
+## Additional Features
+- Mobile Friendly media queris
+- Popular & Upcoming movie carousel
+- Rate Limiting on API calls
+- Caching on frequent API calls
+- Filtering and Sorting on Search list. 
+- Click a movie to open modal with more details
+- List vs Grid View
+- "My Movies" Summary Tab for user insights
 
-## AI Models
-Claude 
-- Example prompt:
-MovieStats.jsx
-update this so that if you click a genre, it filters 'owned movies' to display only owned movies of that genre 
 
-movie-stats__genres
+# AI Models
 
-- make a movieCaousel that accepts movieCardSimple and has the option to horizonal scroll but by defaut does not. use current naming conventions and styling.
+## Claude Sonnet 4.6 and Claude Code
 
-- i want to cache this api request but waht are my optiosn since I don't have persistance in the DB?
+### Prompts used
+
+**Filter owned movies by genre**
+> `MovieStats.jsx` — update this so that if you click a genre it filters the owned movies list to show only movies of that genre.
+> Relevant class: `movie-stats__genres`
+
+**Movie carousel component**
+> Create a `MovieCarousel` component that wraps `MovieCardSimple`. It should support horizontal scrolling as an opt-in prop but render as a normal flow list by default. Follow existing naming conventions and styling.
+
+**Caching API requests without a database**
+> I want to cache this API request but I have no database — what are my options?
