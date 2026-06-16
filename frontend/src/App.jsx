@@ -335,7 +335,7 @@ export default function App() {
         {upcomingResults && (
           <div>
             <header className="app-header">
-              <h1 className="pb-4">Upcoming Movies</h1>
+              <h1 className="py-4">Upcoming Movies</h1>
             </header>
             <MovieCarousel
               movies={upcomingResults}
