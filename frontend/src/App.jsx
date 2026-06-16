@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import SearchBar from "./components/SearchBar.jsx";
 import MovieList from "./components/MovieList.jsx";
+import MovieGrid from "./components/MovieGrid.jsx";
+import ViewToggle from "./components/ViewToggle.jsx";
 import Pagination from "react-bootstrap/Pagination";
 import PopularMovieBanner from "./components/PopularMovieBanner.tsx";
 import { popularMovies, searchMovies } from "./api.js";
@@ -38,6 +40,10 @@ export default function App() {
   // Local filter for the "Your Movies" tab — searches the owned list
   // in-memory, no API call.
   const [ownedQuery, setOwnedQuery] = useState("");
+
+  // Pick the layout component from the toggle state. Both share the same
+  // { movies, ownedIds, onToggleOwn, limit } props.
+  const MovieView = movieDisplay === "grid" ? MovieGrid : MovieList;
 
   const ownedIds = new Set(owned.keys());
   const ownedMovies = [...owned.values()];
@@ -165,11 +171,17 @@ export default function App() {
                 {results.length === 0 ? (
                   <p className="message">No movies found.</p>
                 ) : (
-                  <MovieList
-                    movies={results}
-                    ownedIds={ownedIds}
-                    onToggleOwn={toggleOwned}
-                  />
+                  <>
+                    <ViewToggle
+                      value={movieDisplay}
+                      onChange={setMovieDisplay}
+                    />
+                    <MovieView
+                      movies={results}
+                      ownedIds={ownedIds}
+                      onToggleOwn={toggleOwned}
+                    />
+                  </>
                 )}
                 {totalPages > 1 && (
                   <Pagination className="movie-pagination justify-content-center">
@@ -205,12 +217,15 @@ export default function App() {
             ) : filteredOwned.length === 0 ? (
               <p className="message">No marked movies match “{ownedQuery}”.</p>
             ) : (
-              <MovieList
-                movies={filteredOwned}
-                ownedIds={ownedIds}
-                onToggleOwn={toggleOwned}
-                limit={Infinity}
-              />
+              <>
+                <ViewToggle value={movieDisplay} onChange={setMovieDisplay} />
+                <MovieView
+                  movies={filteredOwned}
+                  ownedIds={ownedIds}
+                  onToggleOwn={toggleOwned}
+                  limit={Infinity}
+                />
+              </>
             )}
           </Tab>
         </Tabs>

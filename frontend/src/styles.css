@@ -320,9 +320,40 @@ body {
   opacity: 0.5;
 }
 
+/* Toggle between list and grid layouts. */
+.view-toggle {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
+}
+
+.view-toggle__button {
+  padding: 0.4rem 1rem;
+  border: 1px solid var(--dark);
+  border-radius: 999px;
+  background: var(--dark);
+  color: var(--gray);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.view-toggle__button--active {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--darkest);
+}
+
+/* Grid layout — responsive columns of square cards. */
+.movie-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
 .movie-square {
   position: relative;
-  aspect-ratio: 1 / 1;     /* the square */
+  aspect-ratio: 1 / 1.5;     /* the square */
   width: 100%;
   border-radius: 12px;
   overflow: hidden;

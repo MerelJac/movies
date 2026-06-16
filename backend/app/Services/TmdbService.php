@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use Illuminate\Http\Client\PendingRequest;
-use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 
 /**
@@ -29,7 +28,7 @@ class TmdbService
     public function searchMovies(string $query, int $page = 1): array
     {
         $data = $this->request()
-            ->get('/discover/movie', [
+            ->get('/search/movie', [
                 'query' => $query,
                 'page' => $page,
                 'include_adult' => false,
