@@ -71,7 +71,7 @@ When you have completed and submitted your code it should meet the following req
 Please return your completed project within 4 days.
 
 ## Additional Features
-- Mobile Friendly media queris
+- Mobile Friendly media queries
 - Popular & Upcoming movie carousel
 - Rate Limiting on API calls
 - Caching on frequent API calls
