@@ -34,19 +34,11 @@
 
 ```bash
 # Terminal 1 — backend
-cd backend && php artisan server
+cd backend && php artisan serve
 
 # Terminal 2 — frontend
 cd frontend && npm run dev
 ```
-
-# To Run
-
-```bash
-cd backend && php artisan serve
-cd frontend && npm run dev
-```
-
 then open: http://localhost:5173/
 
 ## Debugging
