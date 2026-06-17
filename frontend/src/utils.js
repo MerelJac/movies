@@ -45,7 +45,7 @@ export function movieGenres(movie, genres = {}) {
     .filter(Boolean);
 }
 
-// Aggregate stats for the "Your Movies" tab. `genres` is the id => name map
+// Aggregate stats. `genres` is the id => name map
 // fetched from the API. Returns null when there's nothing to summarise so the
 // caller can skip rendering.
 export function computeOwnedStats(movies, genres = {}) {

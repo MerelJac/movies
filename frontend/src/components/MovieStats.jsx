@@ -1,7 +1,7 @@
 import { computeOwnedStats } from "../utils";
 
-// Summary panel for the "Your Movies" tab. Renders nothing when the owned
-// list is empty.
+// Summary panel for the "Your Movies" tab. Limited info for "Watchlist" 
+// Renders nothing when the owned list is empty.
 export default function MovieStats({
   type,
   movies,
