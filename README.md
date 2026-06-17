@@ -8,23 +8,28 @@
 ```bash
   cd frontend && nvm use
 ```
+  > **Note:** If you see `You need to run 'nvm install' to install and use the node version specified in '.nvmrc'`, run `nvm install` first (this installs the version pinned in `.nvmrc`), then run `nvm use` again.
+
   If you don't have nvm: https://github.com/nvm-sh/nvm
   Or install via windows: `winget install --id OpenJS.NodeJS.22 -e`
-
+  If you have issues with `npm install`, try clearing npm cache with `npm cache clean --force`
 ## Setup
 
 1. **Install frontend dependencies**
+Note: start in the root directory
 ```bash
    cd frontend && npm install
 ```
 
 2. **Add backend environment file**
+Note: start in the root directory
 ```bash
    cd backend && cp .env.example .env
 ```
    Then fill in the required values (ask a teammate for credentials).
 
 3 **Install backend dependencies**
+Note: start in the root directory
 ```bash
    cd backend && composer install
 ```
