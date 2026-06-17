@@ -90,7 +90,7 @@ Please return your completed project within 4 days.
 
 ## Claude Sonnet 4.6 and Claude Code
 
-### Prompts used
+### Example Prompts used
 
 **Filter owned movies by genre**
 > `MovieStats.jsx` — update this so that if you click a genre it filters the owned movies list to show only movies of that genre.
